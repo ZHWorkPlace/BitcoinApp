@@ -1,3 +1,5 @@
+using BitcoinApp.Server.Database;
+using BitcoinApp.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -17,17 +19,23 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
 // Configure EF Core
-builder.Services.AddDbContext<BitcoinApp.Server.Database.BitcoinDbContext>(options =>
+builder.Services.AddDbContext<BitcoinDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BitcoinDatabase")));
 
 // Register repository
-//builder.Services.AddScoped<IBitcoinValueRepository, BitcoinValueRepository>();
+builder.Services.AddScoped<IBitcoinValueRepository, BitcoinValueRepository>();
+
+// Register RetrievedValues storage
+builder.Services.AddSingleton<IRetrievedValuesService, RetrievedValuesService>();
+
+// Register API service
+builder.Services.AddTransient<BitcoinValuesApiService>();
 
 // HTTP client used by the background worker
 builder.Services.AddHttpClient("BitcoinWorkerClient");
 
 // Register the periodic background worker
-builder.Services.AddHostedService<BitcoinApp.Server.Services.BitcoinWorker>();
+builder.Services.AddHostedService<BitcoinWorker>();
 
 var app = builder.Build();
 

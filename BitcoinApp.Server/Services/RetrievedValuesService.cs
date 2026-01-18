@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace BitcoinApp.Server.Services
 {
-    public class RetrievedValuesService
+    public class RetrievedValuesService : IRetrievedValuesService
     {
         private ConcurrentBag<BitcoinValueRetrieved> retrievedValues { get; } = [];
 
@@ -12,9 +12,14 @@ namespace BitcoinApp.Server.Services
             retrievedValues.Add(value);
         }
 
-        public List<BitcoinValueRetrieved> GetRetrievedValues()
+        public void MarkAsSaved(DateTime retrievedAt)
         {
-            return retrievedValues.ToList();
+            retrievedValues.Single(v => v.RetrievedAt == retrievedAt).IsSaved = true;
+        }
+
+        public IEnumerable<BitcoinValueRetrieved> GetRetrievedValues()
+        {
+            return retrievedValues;
         }
     }
 }
