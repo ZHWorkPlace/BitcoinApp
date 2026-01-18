@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="BitcoinApp.Client/BitcoinApp.Client.csproj" />
-  <Project Path="BitcoinApp.Server/BitcoinApp.Server.csproj" />
-</Solution>

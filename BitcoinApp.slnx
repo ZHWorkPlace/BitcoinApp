@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="BitcoinApp.Api/BitcoinApp.Api.csproj" Id="ba82ec79-a3fe-4188-b9e6-e2dcf6653ccc" />
+  <Project Path="BitcoinApp.Client/BitcoinApp.Client.csproj" />
+  <Project Path="BitcoinApp.Server/BitcoinApp.Server.csproj" />
+</Solution>
