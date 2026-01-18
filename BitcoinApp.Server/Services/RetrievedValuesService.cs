@@ -7,7 +7,17 @@ namespace BitcoinApp.Server.Services
     {
         private ConcurrentBag<BitcoinValueRetrieved> retrievedValues { get; } = [];
 
-        public void AddRetrievedValue(BitcoinValueRetrieved value)
+        public void AddRetrievedValue(DateTime retrievedAt, decimal bitcoinValue)
+        {
+            AddRetrievedValue(new BitcoinValueRetrieved
+            {
+                RetrievedAt = retrievedAt,
+                Value = bitcoinValue,
+                IsSaved = false
+            });
+        }
+
+        private void AddRetrievedValue(BitcoinValueRetrieved value)
         {
             retrievedValues.Add(value);
         }
