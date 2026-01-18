@@ -9,8 +9,12 @@ builder.Services.AddSerilog((services, lc) => lc
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+// Add Swagger/OpenAPI for controllers
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<BitcoinApp.Server.Services.RetrievedValuesService>();
 
 // HTTP client used by the background worker
 builder.Services.AddHttpClient("BitcoinWorkerClient");
@@ -20,9 +24,18 @@ builder.Services.AddHostedService<BitcoinApp.Server.Services.BitcoinWorker>();
 
 var app = builder.Build();
 
+// Enable Swagger UI and OpenAPI endpoint
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcoinApp API V1");
+    c.RoutePrefix = "swagger";
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Map minimal API OpenAPI document (if you use minimal endpoints in addition to controllers)
     app.MapOpenApi();
 }
 
