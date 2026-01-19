@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace BitcoinApp.Api
 {
     public class BitcoinValueRetrievedDto

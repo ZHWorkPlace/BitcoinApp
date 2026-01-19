@@ -1,6 +1,7 @@
 ﻿using BitcoinApp.Api;
 using BitcoinApp.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.AccessControl;
 
 namespace BitcoinApp.Server.Controllers
 {
@@ -16,9 +17,12 @@ namespace BitcoinApp.Server.Controllers
 
 
         [HttpGet("Live")]
-        public async Task<ActionResult<List<BitcoinValueRetrievedDto>>> GetRetrievedBitcoinValuesAsync()
+        public async Task<ActionResult<GetRetrievedBitcoinValuesResponseDto>> GetRetrievedBitcoinValuesAsync()
         {
-            var result = await bitcoinValuesApiService.GetRetrievedBitcoinValuesAsync();
+            var result = new GetRetrievedBitcoinValuesResponseDto
+            {
+                Retrieved = await bitcoinValuesApiService.GetRetrievedBitcoinValuesAsync()
+            };
 
             return Ok(result);
         }
@@ -34,9 +38,12 @@ namespace BitcoinApp.Server.Controllers
 
 
         [HttpGet("Saved")]
-        public async Task<ActionResult<List<BitcoinValueRetrievedDto>>> GetSavedBitcoinValuesAsync()
+        public async Task<ActionResult<GetBitcoinValueRecordsResponseDto>> GetBitcoinValueRecordsAsync()
         {
-            var result = await bitcoinValuesApiService.GetRetrievedBitcoinValuesAsync();
+            var result = new GetBitcoinValueRecordsResponseDto
+            {
+                Records = await bitcoinValuesApiService.GetBitcoinValueRecordsAsync()
+            };
 
             return Ok(result);
         }

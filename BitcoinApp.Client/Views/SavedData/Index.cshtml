@@ -1,0 +1,54 @@
+﻿@using BitcoinApp.Client.Models.SavedData
+
+@model SavedDataViewModel
+
+@{
+    ViewData["Title"] = "Live Data";
+}
+
+<div class="text-center">
+    <div id="gridWrapper"></div>
+</div>
+
+@section Scripts {
+
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
+    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+
+    <script type="text/javascript">
+
+        const gridInstance = new tui.Grid({
+          el: document.getElementById('gridWrapper'),
+          rowHeaders: ['checkbox'],
+          columns: [
+            {
+              header: 'Name',
+              name: 'retrievedAt',
+              sortable: true,
+              filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
+            },
+            {
+              header: 'Value [EUR]',
+              name: 'bitcoinValue',
+              sortable: true,
+              filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
+            },
+            {
+              header: 'Note',
+              name: 'note',
+              sortable: true,
+              filter: { type: 'text', showApplyBtn: true, showClearBtn: true },
+              validation: { required: true },
+              editor: 'text',
+            }
+          ],
+          data: {
+            api: {
+              readData: { url: '/SavedData/GetData', method: 'GET' }
+            },
+            contentType: 'application/json'
+          },
+        });
+
+    </script>
+}

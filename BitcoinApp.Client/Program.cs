@@ -1,7 +1,22 @@
+using BitcoinApp.Client;
+using BitcoinApp.Client.Services;
+using Microsoft.Extensions.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddTransient<BitcoinApiService>();
+
+builder.Services.Configure<BitcoinApiSettings>(builder.Configuration.GetSection("BitcoinApiSettings"));
+
+builder.Services.AddHttpClient<BitcoinApiService>((serviceProvider, client) =>
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<BitcoinApiSettings>>().Value;
+
+    client.BaseAddress = new Uri(settings.ApiUrl);
+});
 
 var app = builder.Build();
 
@@ -22,8 +37,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=SavedData}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
