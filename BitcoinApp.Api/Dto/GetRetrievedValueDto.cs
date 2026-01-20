@@ -1,9 +1,10 @@
-﻿
-namespace BitcoinApp.Server.Models
+﻿using System;
+
+namespace BitcoinApp.Api.Dto
 {
-    public class BitcoinValueRetrieved
+    public class GetRetrievedValueDto
     {
-        public bool IsSaved { get; set; }
+        public bool IsSaveEnabled { get; set; }
         public DateTime RetrievedAt { get; set; }
         public decimal ValueEur { get; set; }
         public decimal ValueCzk { get; set; }

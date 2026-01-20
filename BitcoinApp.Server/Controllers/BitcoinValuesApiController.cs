@@ -1,7 +1,6 @@
-﻿using BitcoinApp.Api;
+﻿using BitcoinApp.Api.Dto;
 using BitcoinApp.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.AccessControl;
 
 namespace BitcoinApp.Server.Controllers
 {
@@ -17,9 +16,9 @@ namespace BitcoinApp.Server.Controllers
 
 
         [HttpGet("Live")]
-        public async Task<ActionResult<GetRetrievedBitcoinValuesResponseDto>> GetRetrievedBitcoinValuesAsync()
+        public async Task<ActionResult<GetRetrievedValuesResponse>> GetRetrievedBitcoinValuesAsync()
         {
-            var result = new GetRetrievedBitcoinValuesResponseDto
+            var result = new GetRetrievedValuesResponse
             {
                 Retrieved = await bitcoinValuesApiService.GetRetrievedBitcoinValuesAsync()
             };
@@ -29,7 +28,7 @@ namespace BitcoinApp.Server.Controllers
 
 
         [HttpPost("Live")]
-        public async Task<ActionResult<bool>> SaveRetrievedBitcoinValueAsync(SaveBitcoinValueRetrievedDto dto)
+        public async Task<ActionResult<bool>> SaveRetrievedBitcoinValueAsync(SaveRetrievedValueDto dto)
         {
             var result = await bitcoinValuesApiService.SaveRetrievedBitcoinValueAsync(dto);
 
@@ -38,9 +37,9 @@ namespace BitcoinApp.Server.Controllers
 
 
         [HttpGet("Saved")]
-        public async Task<ActionResult<GetBitcoinValueRecordsResponseDto>> GetBitcoinValueRecordsAsync()
+        public async Task<ActionResult<GetValueRecordsResponse>> GetBitcoinValueRecordsAsync()
         {
-            var result = new GetBitcoinValueRecordsResponseDto
+            var result = new GetValueRecordsResponse
             {
                 Records = await bitcoinValuesApiService.GetBitcoinValueRecordsAsync()
             };
@@ -50,18 +49,18 @@ namespace BitcoinApp.Server.Controllers
 
 
         [HttpPost("Saved/update")]
-        public async Task<ActionResult> UpdateSavedBitcoinValuesAsync(List<BitcoinValueRecordDto> toUpdate)
+        public async Task<ActionResult> UpdateSavedBitcoinValuesAsync(UpdateValueRecordsRequest request)
         {
-            await bitcoinValuesApiService.UpdateBitcoinValueRecordsAsync(toUpdate);
+            await bitcoinValuesApiService.UpdateBitcoinValueRecordsAsync(request.Data);
 
             return Ok();
         }
 
 
         [HttpPost("Saved/delete")]
-        public async Task<ActionResult> DeleteSavedBitcoinValuesAsync(List<BitcoinValueRecordDto> toDelete)
+        public async Task<ActionResult> DeleteSavedBitcoinValuesAsync(DeleteValueRecordsRequest request)
         {
-            await bitcoinValuesApiService.DeleteBitcoinValueRecordsAsync(toDelete);
+            await bitcoinValuesApiService.DeleteBitcoinValueRecordsAsync(request.Data);
 
             return Ok();
         }

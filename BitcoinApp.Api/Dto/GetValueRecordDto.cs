@@ -1,12 +1,13 @@
-﻿
-namespace BitcoinApp.Server.Models
+﻿using System;
+
+namespace BitcoinApp.Api.Dto
 {
-    public class BitcoinValueRetrieved
+    public class GetValueRecordDto
     {
-        public bool IsSaved { get; set; }
         public DateTime RetrievedAt { get; set; }
         public decimal ValueEur { get; set; }
         public decimal ValueCzk { get; set; }
         public decimal ExchangeRate { get; set; }
+        public string Note { get; set; }
     }
 }

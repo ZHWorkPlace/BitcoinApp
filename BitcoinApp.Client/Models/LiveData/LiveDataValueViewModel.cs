@@ -4,10 +4,13 @@ namespace BitcoinApp.Client.Models.LiveData
 {
     public class LiveDataValueViewModel
     {
+        public bool IsSaveEnabled { get; set; }
         public DateTime RetrievedAt { get; set; }
-        public decimal Value { get; set; }
+        public decimal ValueEur { get; set; }
+        public decimal ValueCzk { get; set; }
+        public decimal ExchangeRate { get; set; }
 
         [JsonPropertyName("_attributes")]
-        public GridDataSourceDataAttributes? GridRowAttributes { get;set;}
+        public GridDataAttributes? GridRowAttributes { get;set;}
     }
 }

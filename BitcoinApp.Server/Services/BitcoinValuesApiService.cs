@@ -1,4 +1,4 @@
-﻿using BitcoinApp.Api;
+﻿using BitcoinApp.Api.Dto;
 using BitcoinApp.Server.Database;
 
 namespace BitcoinApp.Server.Services
@@ -14,51 +14,62 @@ namespace BitcoinApp.Server.Services
             this.retrievedValuesService = retrievedValuesService;
         }
 
-        public async Task<List<BitcoinValueRetrievedDto>> GetRetrievedBitcoinValuesAsync()
+        public async Task<List<GetRetrievedValueDto>> GetRetrievedBitcoinValuesAsync()
         {
-            return retrievedValuesService.GetRetrievedValues().Select(value => new BitcoinValueRetrievedDto
+            var x = retrievedValuesService.GetRetrievedValues().Select(value => new GetRetrievedValueDto
             {
                 IsSaveEnabled = !value.IsSaved,
                 RetrievedAt = value.RetrievedAt,
-                Value = value.Value
+                ValueCzk = value.ValueCzk,
+                ValueEur = value.ValueEur,
+                ExchangeRate = value.ExchangeRate,
             }).ToList();
-        }
 
-        public async Task<bool> SaveRetrievedBitcoinValueAsync(SaveBitcoinValueRetrievedDto data)
-        {
-            var result = await bitcoinValueRepository.AddAsync(data.RetrievedAt, data.Value, string.Empty);
-            if (result)
+            if (x.Count > 3)
             {
-                retrievedValuesService.MarkAsSaved(data.RetrievedAt);
+                x[2].IsSaveEnabled = false;
             }
 
-            return result;
+            return x;
+        }
+
+        public async Task<bool> SaveRetrievedBitcoinValueAsync(SaveRetrievedValueDto data)
+        {
+            //var result = await bitcoinValueRepository.AddAsync(data.RetrievedAt, data.Value, string.Empty);
+            //if (result)
+            //{
+            //    retrievedValuesService.MarkAsSaved(data.RetrievedAt);
+            //}
+
+            return true;// result;
         }
 
 
-        public async Task<List<BitcoinValueRecordDto>> GetBitcoinValueRecordsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<GetValueRecordDto>> GetBitcoinValueRecordsAsync(CancellationToken cancellationToken = default)
         {
             var data = await bitcoinValueRepository.GetAllAsync(cancellationToken);
 
-            return data.Select(d => new BitcoinValueRecordDto
+            return [.. data.Select(d => new GetValueRecordDto
             {
                 RetrievedAt = d.RetrievedAt,
-                BitcoinValue = d.BitcoinValue,
+                ValueCzk = d.ValueCzk,
+                ValueEur = d.ValueEur,
+                ExchangeRate = d.ExchangeRate,
                 Note = d.Note
-            }).ToList();
+            })];
         }
 
-        public async Task UpdateBitcoinValueRecordsAsync(List<BitcoinValueRecordDto> records)
+        public async Task UpdateBitcoinValueRecordsAsync(List<UpdateValueRecordDto> update)
         {
-            foreach (var record in records)
+            foreach (var record in update)
             {
                 await bitcoinValueRepository.UpdateNoteAsync(record.RetrievedAt, record.Note);
             }
         }
 
-        public async Task DeleteBitcoinValueRecordsAsync(List<BitcoinValueRecordDto> records)
+        public async Task DeleteBitcoinValueRecordsAsync(List<DeleteValueRecordDto> delete)
         {
-            foreach (var record in records)
+            foreach (var record in delete)
             {
                 await bitcoinValueRepository.DeleteAsync(record.RetrievedAt);
             }

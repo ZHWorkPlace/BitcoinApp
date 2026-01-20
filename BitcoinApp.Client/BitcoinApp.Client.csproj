@@ -18,7 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\GridDataSource\" />
+    <Folder Include="Models\Grid\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Models\GridDataResultModel.cs" />
   </ItemGroup>
 
 </Project>

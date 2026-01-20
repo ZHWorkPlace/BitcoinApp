@@ -1,13 +1,12 @@
-﻿@using BitcoinApp.Client.Models.SavedData
-
-@model SavedDataViewModel
-
+﻿
 @{
-    ViewData["Title"] = "Live Data";
+    ViewData["Title"] = "Saved Data";
 }
 
 <div class="text-center">
     <div id="gridWrapper"></div>
+    <input type="button" value="Smazat vybrané záznamy" onclick="OnDeleteSelected()" />
+    <input type="button" value="Uložit změny" onclick="OnSaveChanges()" />
 </div>
 
 @section Scripts {
@@ -25,30 +24,72 @@
               header: 'Name',
               name: 'retrievedAt',
               sortable: true,
-              filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
+              filter: {
+                type: 'date',
+                options: {
+                  format: 'yyyy.MM.dd'
+                }, 
+                showApplyBtn: true, 
+                showClearBtn: true }
+            },
+            {
+              header: 'Value [CZK]',
+              name: 'valueCZK',
+              sortable: true,
+              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
             },
             {
               header: 'Value [EUR]',
-              name: 'bitcoinValue',
+              name: 'valueEUR',
               sortable: true,
-              filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
+              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
             },
             {
-              header: 'Note',
+              header: 'Exchange rate',
+              name: 'exchangeRate',
+              sortable: true,
+              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
+            },
+            {
+              header: 'Poznámka',
               name: 'note',
               sortable: true,
               filter: { type: 'text', showApplyBtn: true, showClearBtn: true },
-              validation: { required: true },
+              validation: { dataType: 'string', required: true },
               editor: 'text',
             }
           ],
           data: {
             api: {
-              readData: { url: '/SavedData/GetData', method: 'GET' }
+              readData: { url: '/SavedData/GetData', method: 'GET' },
+              updateData: { url: '/SavedData/UpdateData', method: 'POST' },
+              deleteData: { url: '/SavedData/DeleteData', method: 'POST' }
             },
             contentType: 'application/json'
           },
         });
+
+        tui.Grid.applyTheme('striped');
+
+        function OnSaveChanges() {
+
+            gridInstance.request('updateData');
+        }
+
+        function OnDeleteSelected() {
+
+            if (gridInstance.removeCheckedRows(false))
+            {
+                gridInstance.request('deleteData');
+            }
+            
+            //gridInstance.request('deleteData');
+        }
+
+        // var periodic = window.setInterval(function(){
+        //   //alert('fuxk');
+        //   gridInstance.reloadData();
+        // }, 5000);
 
     </script>
 }

@@ -1,4 +1,4 @@
-﻿using BitcoinApp.Api;
+﻿using BitcoinApp.Api.Dto;
 using BitcoinApp.Client.Models;
 using BitcoinApp.Client.Models.LiveData;
 using BitcoinApp.Client.Models.SavedData;
@@ -15,50 +15,90 @@ namespace BitcoinApp.Client.Services
         }
 
 
-        
-
-
-        public async Task<SavedDataViewModel> GetSavedData2()
-        {
-            var data = await httpClient.GetFromJsonAsync<GetBitcoinValueRecordsResponseDto>("Saved");
-            if (data != null)
-            {
-                return new SavedDataViewModel
-                {
-                    Result = true,
-                    Data = data.Records.Select(record => new SavedDataRecordViewModel
-                    {
-                        RetrievedAt = record.RetrievedAt,
-                        BitcoinValue = record.BitcoinValue,
-                        Note = record.Note
-                    }).ToList()
-                };
-            }
-            
-            throw new Exception("GetSavedData: empty data");
-        }
-
         public async Task<List<LiveDataValueViewModel>> GetLiveData()
         {
-            var data = await httpClient.GetFromJsonAsync<GetRetrievedBitcoinValuesResponseDto>("Live");
+            var data = await httpClient.GetFromJsonAsync<GetRetrievedValuesResponse>("Live");
 
             return data?.Retrieved.Select(item => new LiveDataValueViewModel
             {
-                GridRowAttributes = new GridDataSourceDataAttributes
+                GridRowAttributes = new GridDataAttributes
                 {
                     CheckDisabled = !item.IsSaveEnabled
                 },
+                IsSaveEnabled = item.IsSaveEnabled,
                 RetrievedAt = item.RetrievedAt,
-                Value = item.Value
-            }
-            ).ToList() ?? throw new Exception("GetLiveData: empty data");
+                ValueCzk = item.ValueCzk,
+                ValueEur = item.ValueEur,
+                ExchangeRate = item.ExchangeRate
+            }).ToList() 
+            ?? throw new Exception("GetLiveData: empty data");
         }
 
-        public async Task<List<BitcoinValueRecordDto>> GetSavedData()
-        {
-            var data = await httpClient.GetFromJsonAsync<GetBitcoinValueRecordsResponseDto>("Saved");
 
-            return data?.Records ?? throw new Exception("GetSavedData: empty data");
+        //public async Task<List<LiveDataValueViewModel>> SaveLiveData(List<LiveDataValueViewModel> save)
+        //{
+        //    //var data = await httpClient.PostAsync<GetRetrievedBitcoinValuesResponseDto>("Live");
+        //    var data = await httpClient.GetFromJsonAsync<GetRetrievedValuesResponse>("Live");
+
+        //    return data?.Retrieved.Select(item => new LiveDataValueViewModel
+        //    {
+        //        GridRowAttributes = new GridDataAttributes
+        //        {
+        //            CheckDisabled = !item.IsSaveEnabled
+        //        },
+        //        RetrievedAt = item.RetrievedAt,
+        //        Value = item.Value
+        //    }).ToList()
+        //    ?? throw new Exception("SaveLiveData: empty data");
+        //}
+
+
+        public async Task<List<SavedDataRecordViewModel>> GetSavedData()
+        {
+            var data = await httpClient.GetFromJsonAsync<GetValueRecordsResponse>("Saved");
+
+            return data?.Records.Select(record => new SavedDataRecordViewModel
+            {
+                RetrievedAt = record.RetrievedAt,
+                ValueCzk = record.ValueCzk,
+                ValueEur = record.ValueEur,
+                ExchangeRate = record.ExchangeRate,
+                Note = record.Note
+            }).ToList() 
+            ?? throw new Exception("GetSavedData: empty data");
+        }
+
+
+        public async Task UpdateSavedData(List<SavedDataRecordViewModel> data)
+        {
+            var request = new UpdateValueRecordsRequest
+            {
+                Data = [.. data.Select(record => new UpdateValueRecordDto
+                {
+                    RetrievedAt = record.RetrievedAt,
+                    Note = record.Note
+                })]
+            };
+
+            var response = await httpClient.PostAsJsonAsync("Saved/update", request);
+
+            response.EnsureSuccessStatusCode();
+        }
+
+
+        public async Task DeleteSavedData(List<SavedDataRecordViewModel> data)
+        {
+            var request = new DeleteValueRecordsRequest
+            {
+                Data = [.. data.Select(record => new DeleteValueRecordDto
+                {
+                    RetrievedAt = record.RetrievedAt
+                })]
+            };
+
+            var response = await httpClient.PostAsJsonAsync("Saved/delete", request);
+
+            response.EnsureSuccessStatusCode();
         }
 
 

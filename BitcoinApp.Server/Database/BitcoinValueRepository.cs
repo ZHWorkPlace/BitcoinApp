@@ -12,14 +12,16 @@ namespace BitcoinApp.Server.Database
             _db = db;
         }
 
-        public async Task<bool> AddAsync(DateTime retrievedAt, decimal bitcoinValue, string note, CancellationToken cancellationToken = default)
+        public async Task<bool> AddAsync(DateTime retrievedAt, decimal valueEur, decimal valueCzk, decimal exchangeRate, string note, CancellationToken cancellationToken = default)
         {
             try
             {
                 var record = new BitcoinValueRecord
                 {
                     RetrievedAt = retrievedAt,
-                    BitcoinValue = bitcoinValue,
+                    ValueEur = valueEur,
+                    ValueCzk = valueCzk,
+                    ExchangeRate = exchangeRate,
                     Note = note
                 };
 

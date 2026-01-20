@@ -23,7 +23,17 @@ namespace BitcoinApp.Server.Database
                .IsRequired();
 
             modelBuilder.Entity<Dto.BitcoinValueRecord>()
-              .Property(i => i.BitcoinValue)
+              .Property(i => i.ValueEur)
+              .HasColumnType("decimal(8,2)")
+              .IsRequired();
+
+            modelBuilder.Entity<Dto.BitcoinValueRecord>()
+              .Property(i => i.ValueCzk)
+              .HasColumnType("decimal(8,2)")
+              .IsRequired();
+
+            modelBuilder.Entity<Dto.BitcoinValueRecord>()
+              .Property(i => i.ExchangeRate)
               .HasColumnType("decimal(8,2)")
               .IsRequired();
 
@@ -31,10 +41,5 @@ namespace BitcoinApp.Server.Database
               .Property(i => i.Note)
               .HasColumnType("nvarchar(MAX)");
         }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlite("server=.;database=myDb;trusted_connection=true;");
-        //}
     }
 }

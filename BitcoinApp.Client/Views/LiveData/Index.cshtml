@@ -4,6 +4,12 @@
 
 <div class="text-center">
     <div id="gridWrapper"></div>
+    <input type="button" value="Ulozit" onclick="OnSaveSelected()" />
+
+    <div class="mt-3" style="text-align:left;">
+        <button id="submitSelectedBtn" class="btn btn-primary">Submit Selected</button>
+        <span id="submitResult" style="margin-left:12px;"></span>
+    </div>
 </div>
 
 @section Scripts {
@@ -12,6 +18,29 @@
     <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 
     <script type="text/javascript">
+
+         class SaveButtonRenderer {
+          constructor(props) {
+            const el = document.createElement('input');
+            const { min, max } = props.columnInfo.renderer.options;
+
+            el.type = 'button';
+            el.min = String(min);
+            el.max = String(max); 
+            el.disabled = true;
+
+            this.el = el;
+            this.render(props);
+          }
+
+          getElement() {
+            return this.el;
+          }
+
+          render(props) {
+            this.el.value = String(props.value);
+          }
+        }
 
         const gridInstance = new tui.Grid({
           el: document.getElementById('gridWrapper'),
@@ -24,18 +53,88 @@
               filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
             },
             {
-              header: 'Value [EUR]',
-              name: 'value',
+              header: 'Value [CZK]',
+              name: 'valueCzk',
               sortable: true,
-              filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
+              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
+            },
+            {
+              header: 'Value [EUR]',
+              name: 'valueEur',
+              sortable: true,
+              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
+            },
+            {
+              header: 'Exchange rate',
+              name: 'exchangeRate',
+              sortable: true,
+              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
+            },
+            {
+              header: '',
+              name: 'isSaveEnabled',
+              renderer: {
+                type: CustomSliderRenderer
+              }
             }
           ],
           data: {
             api: {
-              readData: { url: '/LiveData/GetData', method: 'GET' }
+              readData: { url: '/LiveData/GetData', method: 'GET' },
+              updateData: { url: '/LiveData/SaveData', method: 'PUT' },
             },
             contentType: 'application/json'
           },
+        });
+
+        function OnSaveSelected() {
+
+           gridInstance.request('updateData');
+        }
+
+        // Helper to pick a numeric id from a row object. Adjust if your id property name differs.
+        function getRowId(row) {
+            return row.id || row.Id || row.ID || row.rowKey || row._attributes?.rowKey || null;
+        }
+
+        function showResult(message, isError) {
+            var el = document.getElementById('submitResult');
+            el.textContent = message;
+            el.style.color = isError ? 'crimson' : 'green';
+        }
+
+        document.getElementById('submitSelectedBtn').addEventListener('click', async function () {
+            try {
+                // toast-ui Grid API: getCheckedRows returns the row objects for checked checkboxes
+                const checkedRows = gridInstance.getCheckedRows();
+                const ids = checkedRows.map(getRowId).filter(function (x) { return x !== null && x !== undefined; });
+
+                if (!ids || ids.length === 0) {
+                    showResult('No rows selected.', true);
+                    return;
+                }
+
+                showResult('Submitting...', false);
+
+                const resp = await fetch('/SavedData/SubmitSelected', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(ids)
+                });
+
+                if (!resp.ok) {
+                    const txt = await resp.text();
+                    showResult('Server error: ' + (txt || resp.statusText), true);
+                    return;
+                }
+
+                const json = await resp.json();
+                showResult('Success. Processed: ' + (json?.processed ?? ids.length), false);
+            } catch (err) {
+                showResult('Request failed: ' + (err.message || err), true);
+            }
         });
 
     </script>

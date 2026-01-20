@@ -1,9 +1,8 @@
 ﻿
 namespace BitcoinApp.Client.Models
 {
-    public class GridDataSourceModel<T>
+    public class GridDataSourceModel<T> : GridDataResultModel
     {
-        public bool Result { get; set; }
         public GridDataSourceDataModel<T> Data { get; set; } = null!;
     }
 }

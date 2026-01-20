@@ -77,12 +77,15 @@ namespace BitcoinApp.Server.Services
         {
             var document = JsonDocument.Parse(content);
             var data = document.RootElement.GetProperty("Data");
-            var bitcoinValue = data.GetProperty("BTC-EUR").GetProperty("PRICE").GetDecimal();
+            var valueEur = data.GetProperty("BTC-EUR").GetProperty("PRICE").GetDecimal();
             var retrievedAt = DateTime.UtcNow;
 
-            retrievedValuesService.AddRetrievedValue(retrievedAt, bitcoinValue);
+            decimal exchangeRate = 24.5m; // Placeholder for actual exchange rate retrieval logic
+            decimal valueCzk = Math.Round(valueEur * exchangeRate, 2);
 
-            logger.LogInformation("Added Bitcoin value '{bitcoinValue}' at {retrievedAt}", bitcoinValue, retrievedAt);
+            retrievedValuesService.AddRetrievedValue(retrievedAt, valueEur, valueCzk, exchangeRate);
+
+            logger.LogInformation("Added Bitcoin value '{valueEur}' EUR => '{valueCzk}' CZK [rate '{exchangeRate}'] at {retrievedAt}", valueEur, valueCzk, exchangeRate, retrievedAt);
         }
     }
 }
