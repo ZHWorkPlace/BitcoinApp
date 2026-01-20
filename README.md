@@ -16,6 +16,7 @@ Po kliknutí na tlačítko "Uložit data" se provede AJAX volání na server, kt
 Část "Saved Data" používá javaskriptovou knihovnu "Toust UI Grid" (https://ui.toast.com/tui-grid) pro správu záznamů (řešení sortování, filtrování, úpravy a validací).
 Pomocí checkboxů lze záznamy označit a následně je smazat tlačítkem "Smazat vybrané záznamy". Dále lze editovat Poznámky přímo v tabulce. Po editaci se provede validace na straně klienta (červené podbarvení). Upravené záznamy se uloží do databáze po kliknutí na tlačítko "Uložit změny".
 
+Pro potřeby popisu a testování rozhraní je k dispozici swagger (../swagger/index.html).
 
 ## Návod ke spuštění aplikace
 
