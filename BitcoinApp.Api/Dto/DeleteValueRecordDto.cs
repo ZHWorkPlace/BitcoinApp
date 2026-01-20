@@ -4,6 +4,6 @@ namespace BitcoinApp.Api.Dto
 {
     public class DeleteValueRecordDto
     {
-        public DateTime RetrievedAt { get; set; }
+        public Guid Id { get; set; }
     }
 }

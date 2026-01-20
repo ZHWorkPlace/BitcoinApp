@@ -24,8 +24,9 @@ namespace BitcoinApp.Server.Migrations
 
             modelBuilder.Entity("BitcoinApp.Server.Database.Dto.BitcoinValueRecord", b =>
                 {
-                    b.Property<DateTime>("RetrievedAt")
-                        .HasColumnType("datetime");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ExchangeRate")
                         .HasColumnType("decimal(12,2)");
@@ -34,13 +35,16 @@ namespace BitcoinApp.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(MAX)");
 
+                    b.Property<DateTime>("RetrievedAt")
+                        .HasColumnType("datetime");
+
                     b.Property<decimal>("ValueCzk")
                         .HasColumnType("decimal(12,2)");
 
                     b.Property<decimal>("ValueEur")
                         .HasColumnType("decimal(12,2)");
 
-                    b.HasKey("RetrievedAt");
+                    b.HasKey("Id");
 
                     b.ToTable("BitcoinValueRecords");
                 });

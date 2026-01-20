@@ -15,7 +15,12 @@ namespace BitcoinApp.Server.Database
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Dto.BitcoinValueRecord>()
-               .HasKey(i => i.RetrievedAt);
+               .HasKey(i => i.Id);
+
+            modelBuilder.Entity<Dto.BitcoinValueRecord>()
+               .Property(i => i.Id)
+               .HasColumnType("uniqueidentifier")
+               .IsRequired();
 
             modelBuilder.Entity<Dto.BitcoinValueRecord>()
                .Property(i => i.RetrievedAt)

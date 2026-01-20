@@ -48,6 +48,7 @@ namespace BitcoinApp.Client.Services
 
             return data?.Records.Select(record => new SavedDataRecordViewModel
             {
+                Id = record.Id,
                 RetrievedAt = record.RetrievedAt,
                 ValueCzk = record.ValueCzk,
                 ValueEur = record.ValueEur,
@@ -64,7 +65,7 @@ namespace BitcoinApp.Client.Services
             {
                 Data = [.. data.Select(record => new UpdateValueRecordDto
                 {
-                    RetrievedAt = record.RetrievedAt,
+                    Id = record.Id,
                     Note = record.Note
                 })]
             };
@@ -81,7 +82,7 @@ namespace BitcoinApp.Client.Services
             {
                 Data = [.. data.Select(record => new DeleteValueRecordDto
                 {
-                    RetrievedAt = record.RetrievedAt
+                    Id = record.Id
                 })]
             };
 

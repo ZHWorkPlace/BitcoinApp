@@ -1,6 +1,5 @@
 
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BitcoinApp.Server.Services
 {

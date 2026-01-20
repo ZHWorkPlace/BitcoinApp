@@ -15,13 +15,16 @@ namespace BitcoinApp.Server.Migrations
                 name: "BitcoinValueRecords",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RetrievedAt = table.Column<DateTime>(type: "datetime", nullable: false),
-                    BitcoinValue = table.Column<decimal>(type: "decimal(8,2)", nullable: false),
+                    ValueEur = table.Column<decimal>(type: "decimal(12,2)", nullable: false),
+                    ValueCzk = table.Column<decimal>(type: "decimal(12,2)", nullable: false),
+                    ExchangeRate = table.Column<decimal>(type: "decimal(12,2)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(MAX)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BitcoinValueRecords", x => x.RetrievedAt);
+                    table.PrimaryKey("PK_BitcoinValueRecords", x => x.Id);
                 });
         }
 

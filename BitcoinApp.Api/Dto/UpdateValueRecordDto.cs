@@ -4,7 +4,7 @@ namespace BitcoinApp.Api.Dto
 {
     public class UpdateValueRecordDto
     {
-        public DateTime RetrievedAt { get; set; }
+        public Guid Id { get; set; }
         public string Note { get; set; }
     }
 }

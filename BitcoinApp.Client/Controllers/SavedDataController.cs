@@ -1,4 +1,3 @@
-using BitcoinApp.Api;
 using BitcoinApp.Client.Models;
 using BitcoinApp.Client.Models.SavedData;
 using BitcoinApp.Client.Services;
@@ -53,7 +52,7 @@ namespace BitcoinApp.Client.Controllers
         {
             try
             {
-               // await bitcoinApiService.DeleteSavedData(data.DeletedRows);
+                 await bitcoinApiService.DeleteSavedData(data.DeletedRows);
 
                  return new GridDataResultModel();
             }
@@ -61,25 +60,6 @@ namespace BitcoinApp.Client.Controllers
             {
                 return new GridDataResultModel(ex.Message);
             }
-        }
-
-
-        // Added endpoint to receive selected row ids from the LiveData grid.
-        // Accepts a JSON array of integers in the request body and returns a simple result object.
-        [HttpPost]  
-        [Route("SavedData/SubmitSelected")]
-        public async Task<IActionResult> SubmitSelected([FromBody] int[] ids)
-        {
-            if (ids == null || ids.Length == 0)
-            {
-                return BadRequest("No row ids provided.");
-            }
-
-            // TODO: replace with actual processing logic that uses bitcoinApiService
-            // Example: await bitcoinApiService.ProcessSavedData(ids);
-
-            // For now return simple success with count
-            return Ok(new { processed = ids.Length });
         }
     }
 }

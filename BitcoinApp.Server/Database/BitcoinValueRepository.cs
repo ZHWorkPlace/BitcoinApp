@@ -13,18 +13,19 @@ namespace BitcoinApp.Server.Database
         }
 
 
-        public async Task<bool> ExistsAsync(DateTime retrievedAt, CancellationToken cancellationToken = default)
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _db.BitcoinValueRecords.FindAsync(retrievedAt, cancellationToken) != null;
+            return await _db.BitcoinValueRecords.FindAsync(id, cancellationToken) != null;
         }
 
 
-        public async Task<bool> AddAsync(DateTime retrievedAt, decimal valueEur, decimal valueCzk, decimal exchangeRate, string note, CancellationToken cancellationToken = default)
+        public async Task<bool> AddAsync(Guid id, DateTime retrievedAt, decimal valueEur, decimal valueCzk, decimal exchangeRate, string note, CancellationToken cancellationToken = default)
         {
             try
             {
                 var record = new BitcoinValueRecord
                 {
+                    Id = id,
                     RetrievedAt = retrievedAt,
                     ValueEur = valueEur,
                     ValueCzk = valueCzk,
@@ -43,9 +44,9 @@ namespace BitcoinApp.Server.Database
             }
         }
 
-        public async Task<bool> DeleteAsync(DateTime retrievedAt, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var entity = await _db.BitcoinValueRecords.FindAsync(retrievedAt, cancellationToken);
+            var entity = await _db.BitcoinValueRecords.FindAsync(id, cancellationToken);
             if (entity is null)
             {
                 return false;
@@ -58,9 +59,9 @@ namespace BitcoinApp.Server.Database
             return true;
         }
 
-        public async Task<bool> UpdateNoteAsync(DateTime retrievedAt, string note, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateNoteAsync(Guid id, string note, CancellationToken cancellationToken = default)
         {
-            var entity = await _db.BitcoinValueRecords.FindAsync(retrievedAt, cancellationToken);
+            var entity = await _db.BitcoinValueRecords.FindAsync(id, cancellationToken);
             if (entity is null)
             {
                 return false;
