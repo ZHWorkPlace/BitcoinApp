@@ -4,6 +4,7 @@
 }
 
 <div class="text-center">
+    <h2>Saved Data</h2>
     <div id="gridWrapper"></div>
     <input type="button" value="Smazat vybrané záznamy" onclick="OnDeleteSelected()" />
     <input type="button" value="Uložit změny" onclick="OnSaveChanges()" />
@@ -21,7 +22,7 @@
           rowHeaders: ['checkbox'],
           columns: [
             {
-              header: 'Name',
+              header: 'Datum a čas',
               name: 'retrievedAt',
               sortable: true,
               filter: {
@@ -33,19 +34,19 @@
                 showClearBtn: true }
             },
             {
-              header: 'Value [CZK]',
-              name: 'valueCzk',
-              sortable: true,
-              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
-            },
-            {
-              header: 'Value [EUR]',
+              header: 'Cena [EUR]',
               name: 'valueEur',
               sortable: true,
               filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
             },
             {
-              header: 'Exchange rate',
+              header: 'Cena [CZK]',
+              name: 'valueCzk',
+              sortable: true,
+              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
+            },
+            {
+              header: 'Kurz',
               name: 'exchangeRate',
               sortable: true,
               filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
@@ -82,14 +83,7 @@
             {
                 gridInstance.request('deleteData');
             }
-            
-            //gridInstance.request('deleteData');
         }
-
-        // var periodic = window.setInterval(function(){
-        //   //alert('fuxk');
-        //   gridInstance.reloadData();
-        // }, 5000);
 
     </script>
 }
