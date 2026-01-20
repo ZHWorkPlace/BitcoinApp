@@ -8,10 +8,11 @@ namespace BitcoinApp.Server.Services
         public ExchangeRate ExchangeRate { get; } = new ExchangeRate();
         private ConcurrentBag<BitcoinValueRetrieved> RetrievedValues { get; } = [];
 
-        public void AddRetrievedValue(DateTime retrievedAt, decimal valueEur, decimal valueCzk, decimal exchangeRate)
+        public void AddRetrievedValue(Guid id, DateTime retrievedAt, decimal valueEur, decimal valueCzk, decimal exchangeRate)
         {
             AddRetrievedValue(new BitcoinValueRetrieved
             {
+                Id = id,
                 RetrievedAt = retrievedAt,
                 ValueEur = valueEur,
                 ValueCzk = valueCzk,
@@ -25,10 +26,6 @@ namespace BitcoinApp.Server.Services
             RetrievedValues.Add(value);
         }
 
-        public void MarkAsSaved(DateTime retrievedAt)
-        {
-            RetrievedValues.Single(v => v.RetrievedAt == retrievedAt).IsSaved = true;
-        }
 
         public IEnumerable<BitcoinValueRetrieved> GetRetrievedValues()
         {

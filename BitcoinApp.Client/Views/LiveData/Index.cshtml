@@ -25,11 +25,13 @@
         });
     }
 
-    function OnSaveLiveData(retrievedAt, el) {
+    function OnSaveLiveData(id, el) {
 
         var data = {
-            "retrievedAt": retrievedAt
+            "Id": id
         };
+
+        console.log('el = ' + id);
 
         //console.log('el = ' + el.parent().html());
         $.ajax({
@@ -38,7 +40,7 @@
             data: JSON.stringify(data),
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json; charset=UTF-8'
             },
             success: function (response) {
 

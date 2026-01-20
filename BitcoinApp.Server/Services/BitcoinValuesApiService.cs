@@ -18,6 +18,7 @@ namespace BitcoinApp.Server.Services
         {
             var x = retrievedValuesService.GetRetrievedValues().Select(value => new GetRetrievedValueDto
             {
+                Id = value.Id,
                 IsSaveEnabled = !value.IsSaved,
                 RetrievedAt = value.RetrievedAt,
                 ValueCzk = value.ValueCzk,
@@ -25,27 +26,30 @@ namespace BitcoinApp.Server.Services
                 ExchangeRate = value.ExchangeRate,
             }).ToList();
 
-            //if (x.Count > 3)
-            //{
-            //    x[2].IsSaveEnabled = false;
-            //}
+            if (x.Count > 3)
+            {
+                x[2].IsSaveEnabled = false;
+            }
 
             return x;
         }
 
-        public async Task<bool> SaveRetrievedBitcoinValueAsync(DateTime retrievedAt)
+        public async Task<bool> SaveRetrievedBitcoinValueAsync(Guid id)
         {
-            var exists = await bitcoinValueRepository.ExistsAsync(retrievedAt);
-            if (exists)
-            {
-                return false;
-            }
-
-            var data = retrievedValuesService.GetRetrievedValues().FirstOrDefault(v => v.RetrievedAt == retrievedAt);
+            var data = retrievedValuesService.GetRetrievedValues().SingleOrDefault(v => v.Id == id);
             if (data is null)
             {
-                return false;
+                throw new Exception($"Value {id} not found in retrieveds");
+                // return false;
             }
+
+            var exists = await bitcoinValueRepository.ExistsAsync(data.RetrievedAt);
+            if (exists)
+            {
+                throw new Exception($"Value {id} already exists in the database.");
+               // return false;
+            }
+
 
             var result = await bitcoinValueRepository.AddAsync(data.RetrievedAt, data.ValueEur, data.ValueCzk, data.ExchangeRate, string.Empty);
             if (result)

@@ -32,7 +32,7 @@
             <div class="live-flex-cell controls" role="cell">
                 @if (row.IsSaveEnabled)
                 {
-                    <input type="button" value="Uložit data" onclick="OnSaveLiveData('@(row.RetrievedAt)', this)" />
+                    <input type="button" value="Uložit data" onclick="OnSaveLiveData('@(row.Id)', this)" />
                 }
             </div>
         </div>

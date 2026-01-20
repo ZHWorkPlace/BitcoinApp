@@ -24,17 +24,17 @@ namespace BitcoinApp.Server.Database
 
             modelBuilder.Entity<Dto.BitcoinValueRecord>()
               .Property(i => i.ValueEur)
-              .HasColumnType("decimal(8,2)")
+              .HasColumnType("decimal(12,2)")
               .IsRequired();
 
             modelBuilder.Entity<Dto.BitcoinValueRecord>()
               .Property(i => i.ValueCzk)
-              .HasColumnType("decimal(8,2)")
+              .HasColumnType("decimal(12,2)")
               .IsRequired();
 
             modelBuilder.Entity<Dto.BitcoinValueRecord>()
               .Property(i => i.ExchangeRate)
-              .HasColumnType("decimal(8,2)")
+              .HasColumnType("decimal(12,2)")
               .IsRequired();
 
             modelBuilder.Entity<Dto.BitcoinValueRecord>()

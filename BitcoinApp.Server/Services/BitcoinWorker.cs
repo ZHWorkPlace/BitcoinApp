@@ -96,9 +96,11 @@ namespace BitcoinApp.Server.Services
             
             decimal valueCzk = Math.Round(valueEur * exchangeRate, 2);
 
-            retrievedValuesService.AddRetrievedValue(retrievedAt, valueEur, valueCzk, exchangeRate);
+            var id = Guid.NewGuid();
 
-            logger.LogInformation("Added Bitcoin value '{valueEur}' EUR => '{valueCzk}' CZK [rate '{exchangeRate}'] at {retrievedAt}", valueEur, valueCzk, exchangeRate, retrievedAt);
+            retrievedValuesService.AddRetrievedValue(id, retrievedAt, valueEur, valueCzk, exchangeRate);
+
+            logger.LogInformation("Added Bitcoin value '{valueEur}' EUR => '{valueCzk}' CZK [rate '{exchangeRate}'] at {retrievedAt} - {id}", valueEur, valueCzk, exchangeRate, retrievedAt, id);
         }
     }
 }

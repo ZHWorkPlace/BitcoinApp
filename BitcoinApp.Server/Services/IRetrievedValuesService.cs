@@ -7,7 +7,6 @@ namespace BitcoinApp.Server.Services
         public ExchangeRate ExchangeRate { get; }
         IEnumerable<BitcoinValueRetrieved> GetRetrievedValues();
 
-        void AddRetrievedValue(DateTime retrievedAt, decimal valueEur, decimal valueCzk, decimal exchangeRate);
-        void MarkAsSaved(DateTime retrievedAt);
+        void AddRetrievedValue(Guid id, DateTime retrievedAt, decimal valueEur, decimal valueCzk, decimal exchangeRate);
     }
 }

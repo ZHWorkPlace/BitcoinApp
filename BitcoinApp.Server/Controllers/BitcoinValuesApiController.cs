@@ -30,7 +30,7 @@ namespace BitcoinApp.Server.Controllers
         [HttpPost("Live")]
         public async Task<ActionResult<bool>> SaveRetrievedBitcoinValueAsync(SaveRetrievedValueRequest request)
         {
-            var result = await bitcoinValuesApiService.SaveRetrievedBitcoinValueAsync(request.RetrievedAt);
+            var result = await bitcoinValuesApiService.SaveRetrievedBitcoinValueAsync(request.Id);
 
             return Ok(result);
         }

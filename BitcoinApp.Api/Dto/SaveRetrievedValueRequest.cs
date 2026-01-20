@@ -4,6 +4,6 @@ namespace BitcoinApp.Api.Dto
 {
     public class SaveRetrievedValueRequest
     {
-        public DateTime RetrievedAt { get; set; }
+        public Guid Id { get; set; }
     }
 }

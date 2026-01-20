@@ -21,10 +21,7 @@ namespace BitcoinApp.Client.Services
 
             return data?.Retrieved.Select(item => new LiveDataGridRowViewModel
             {
-                GridRowAttributes = new GridDataAttributes
-                {
-                    CheckDisabled = !item.IsSaveEnabled
-                },
+                Id = item.Id,
                 IsSaveEnabled = item.IsSaveEnabled,
                 RetrievedAt = item.RetrievedAt,
                 ValueCzk = item.ValueCzk,
@@ -35,13 +32,8 @@ namespace BitcoinApp.Client.Services
         }
 
 
-        public async Task<bool> SaveLiveData(DateTime retrievedAt)
+        public async Task<bool> SaveLiveData(SaveRetrievedValueRequest request)
         {
-            var request = new SaveRetrievedValueRequest
-            {
-                RetrievedAt = retrievedAt
-            };
-
             var response = await httpClient.PostAsJsonAsync("Live", request);
 
             response.EnsureSuccessStatusCode();

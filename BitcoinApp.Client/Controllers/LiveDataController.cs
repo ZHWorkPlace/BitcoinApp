@@ -1,10 +1,7 @@
 ﻿using BitcoinApp.Api.Dto;
-using BitcoinApp.Client.Models;
 using BitcoinApp.Client.Models.LiveData;
-using BitcoinApp.Client.Models.SavedData;
 using BitcoinApp.Client.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace BitcoinApp.Client.Controllers
 {
@@ -36,6 +33,14 @@ namespace BitcoinApp.Client.Controllers
         }
 
 
+        [HttpPost]
+        [Produces("application/json")]
+        public async Task<bool> SaveLiveData([FromBody] SaveRetrievedValueRequest request)
+        {
+            return await bitcoinApiService.SaveLiveData(request);
+        }
+
+
         private async Task<LiveDataGridViewModel> GetLiveDataGridViewModel()
         {
             var data = await bitcoinApiService.GetLiveData();
@@ -44,6 +49,7 @@ namespace BitcoinApp.Client.Controllers
             {
                 Rows = [.. data.Select(item => new LiveDataGridRowViewModel
                     {
+                        Id = item.Id,
                         IsSaveEnabled = item.IsSaveEnabled,
                         RetrievedAt = item.RetrievedAt,
                         ValueCzk = item.ValueCzk,
@@ -51,39 +57,6 @@ namespace BitcoinApp.Client.Controllers
                         ExchangeRate = item.ExchangeRate
                     })]
             };
-        }
-
-
-        [HttpPost]
-        [Produces("application/json")]
-        public async Task<bool> SaveLiveData([FromBody] SaveRetrievedValueRequest request)
-        {
-            return await bitcoinApiService.SaveLiveData(request.RetrievedAt);
-        }
-
-        [HttpGet]
-        [Produces("application/json")]
-        public async Task<GridDataSourceModel<LiveDataGridRowViewModel>> GetData(int page)
-        {
-            return await bitcoinApiService.GridDataSource(async (s) => await s.GetLiveData(), page);
-        }
-
-        [HttpPut]
-        [Produces("application/json")]
-        public async Task UpdateData([FromBody] GridDataUpdatedModel<LiveDataGridRowViewModel> grid)
-        {
-            
-
-            //return await bitcoinApiService.GridDataSource(async (s) => await s.GetSavedData(), 14);
-        }
-
-        [HttpPut]
-        [Produces("application/json")]
-        public async Task<GridDataSourceModel<SavedDataRecordViewModel>> UpdateData([FromBody] object obj)
-        {
-
-
-            return await bitcoinApiService.GridDataSource(async (s) => await s.GetSavedData(), 14);
         }
     }
 }
