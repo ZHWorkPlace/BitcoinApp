@@ -38,11 +38,13 @@ body {
 
 .live-header-row, .live-flex-row {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     width: 100%;
 }
 
 .live-flex-cell {
+    display: flex;
+    align-items: center;
     padding: 8px 12px;
     border-bottom: 1px solid #e6e6e6;
     flex: 1 1 0;
@@ -61,11 +63,26 @@ body {
 
 .live-flex-cell.live-controls {
     flex: 0 0 160px;
-    text-align: left;
+    justify-content: flex-start;
 }
 
 .live-already-saved {
     background-color: #e8f9ea;
+}
+
+.live-flex-row {
+    min-height: 48px;
+}
+
+.live-flex-cell.live-controls input[type="button"],
+.live-flex-cell.live-controls button {
+    height: 36px;
+    line-height: 36px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
 @media (max-width: 720px) {
