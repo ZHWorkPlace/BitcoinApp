@@ -15,11 +15,11 @@ namespace BitcoinApp.Client.Services
         }
 
 
-        public async Task<List<LiveDataValueViewModel>> GetLiveData()
+        public async Task<List<LiveDataGridRowViewModel>> GetLiveData()
         {
             var data = await httpClient.GetFromJsonAsync<GetRetrievedValuesResponse>("Live");
 
-            return data?.Retrieved.Select(item => new LiveDataValueViewModel
+            return data?.Retrieved.Select(item => new LiveDataGridRowViewModel
             {
                 GridRowAttributes = new GridDataAttributes
                 {
@@ -35,22 +35,19 @@ namespace BitcoinApp.Client.Services
         }
 
 
-        //public async Task<List<LiveDataValueViewModel>> SaveLiveData(List<LiveDataValueViewModel> save)
-        //{
-        //    //var data = await httpClient.PostAsync<GetRetrievedBitcoinValuesResponseDto>("Live");
-        //    var data = await httpClient.GetFromJsonAsync<GetRetrievedValuesResponse>("Live");
+        public async Task<bool> SaveLiveData(DateTime retrievedAt)
+        {
+            var request = new SaveRetrievedValueRequest
+            {
+                RetrievedAt = retrievedAt
+            };
 
-        //    return data?.Retrieved.Select(item => new LiveDataValueViewModel
-        //    {
-        //        GridRowAttributes = new GridDataAttributes
-        //        {
-        //            CheckDisabled = !item.IsSaveEnabled
-        //        },
-        //        RetrievedAt = item.RetrievedAt,
-        //        Value = item.Value
-        //    }).ToList()
-        //    ?? throw new Exception("SaveLiveData: empty data");
-        //}
+            var response = await httpClient.PostAsJsonAsync("Live", request);
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
 
 
         public async Task<List<SavedDataRecordViewModel>> GetSavedData()

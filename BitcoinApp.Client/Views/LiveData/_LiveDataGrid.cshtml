@@ -1,0 +1,40 @@
+﻿@using BitcoinApp.Client.Models.LiveData
+
+@model LiveDataGridViewModel
+
+<div class="live-flex-table" role="table" aria-label="Live data table">
+
+    <div class="live-header-row" role="row">
+        <div class="live-flex-cell" role="columnheader">Datum a čas</div>
+        <div class="live-flex-cell" role="columnheader">Cena [EUR]</div>
+        <div class="live-flex-cell" role="columnheader">Cena [CZK]</div>
+        <div class="live-flex-cell" role="columnheader">Kurz</div>
+        <div class="live-flex-cell live-controls" role="columnheader">&nbsp</div>
+    </div>
+
+    @foreach (var row in Model.Rows)
+    {
+        var rowClass = row.IsSaveEnabled ? "" : "live-already-saved";
+
+        <div class="live-flex-row @rowClass" role="row">
+            <div class="live-flex-cell" role="cell">
+                @row.RetrievedAt.ToString("dd.MM.yyyy HH:mm:ss")
+            </div>
+            <div class="live-flex-cell value" role="cell">
+                @row.ValueEur.ToString("F2")
+            </div>
+            <div class="live-flex-cell value" role="cell">
+                @row.ValueCzk.ToString("F2")
+            </div>
+            <div class="live-flex-cell value" role="cell">
+                @row.ExchangeRate.ToString("F2")
+            </div>
+            <div class="live-flex-cell controls" role="cell">
+                @if (row.IsSaveEnabled)
+                {
+                    <input type="button" value="Uložit data" onclick="OnSaveLiveData('@(row.RetrievedAt)', this)" />
+                }
+            </div>
+        </div>
+    }
+</div>

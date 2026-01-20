@@ -1,11 +1,10 @@
-﻿using BitcoinApp.Api;
+﻿using BitcoinApp.Api.Dto;
 using BitcoinApp.Client.Models;
 using BitcoinApp.Client.Models.LiveData;
 using BitcoinApp.Client.Models.SavedData;
 using BitcoinApp.Client.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.Net.Http;
+using System.Text.Json;
 
 namespace BitcoinApp.Client.Controllers
 {
@@ -21,20 +20,57 @@ namespace BitcoinApp.Client.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View();
+            var model = new LiveDataViewModel
+            {
+                Grid = await GetLiveDataGridViewModel()
+            };
+
+            return View(model);
         }
 
 
         [HttpGet]
+        public async Task<IActionResult> GetGridView()
+        {
+            return PartialView("_LiveDataGrid", await GetLiveDataGridViewModel());
+        }
+
+
+        private async Task<LiveDataGridViewModel> GetLiveDataGridViewModel()
+        {
+            var data = await bitcoinApiService.GetLiveData();
+
+            return new LiveDataGridViewModel
+            {
+                Rows = [.. data.Select(item => new LiveDataGridRowViewModel
+                    {
+                        IsSaveEnabled = item.IsSaveEnabled,
+                        RetrievedAt = item.RetrievedAt,
+                        ValueCzk = item.ValueCzk,
+                        ValueEur = item.ValueEur,
+                        ExchangeRate = item.ExchangeRate
+                    })]
+            };
+        }
+
+
+        [HttpPost]
         [Produces("application/json")]
-        public async Task<GridDataSourceModel<LiveDataValueViewModel>> GetData(int page)
+        public async Task<bool> SaveLiveData([FromBody] SaveRetrievedValueRequest request)
+        {
+            return await bitcoinApiService.SaveLiveData(request.RetrievedAt);
+        }
+
+        [HttpGet]
+        [Produces("application/json")]
+        public async Task<GridDataSourceModel<LiveDataGridRowViewModel>> GetData(int page)
         {
             return await bitcoinApiService.GridDataSource(async (s) => await s.GetLiveData(), page);
         }
 
         [HttpPut]
         [Produces("application/json")]
-        public async Task UpdateData([FromBody] GridDataUpdatedModel<LiveDataValueViewModel> grid)
+        public async Task UpdateData([FromBody] GridDataUpdatedModel<LiveDataGridRowViewModel> grid)
         {
             
 

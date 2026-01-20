@@ -2,7 +2,7 @@
 
 namespace BitcoinApp.Client.Models.LiveData
 {
-    public class LiveDataValueViewModel
+    public class LiveDataGridRowViewModel
     {
         public bool IsSaveEnabled { get; set; }
         public DateTime RetrievedAt { get; set; }

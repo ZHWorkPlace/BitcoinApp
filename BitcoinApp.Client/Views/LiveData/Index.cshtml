@@ -1,134 +1,56 @@
-﻿@{
+﻿@using BitcoinApp.Client.Models.LiveData
+
+@model LiveDataViewModel
+
+@{
     ViewData["Title"] = "Live Data";
 }
 
 <div class="text-center">
-    <div id="gridWrapper"></div>
-    <input type="button" value="Ulozit" onclick="OnSaveSelected()" />
-
-    <div class="mt-3" style="text-align:left;">
-        <button id="submitSelectedBtn" class="btn btn-primary">Submit Selected</button>
-        <span id="submitResult" style="margin-left:12px;"></span>
+    <div id="liveDataGrid">
+        @await Html.PartialAsync("_LiveDataGrid", Model.Grid)
     </div>
 </div>
 
-@section Scripts {
+<script type="text/javascript">
 
-    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
-    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+    function RefreshLiveDataGrid() {
 
-    <script type="text/javascript">
-
-        //  class SaveButtonRenderer {
-        //   constructor(props) {
-        //     const el = document.createElement('input');
-        //     const { min, max } = props.columnInfo.renderer.options;
-
-        //     el.type = 'button';
-        //     el.min = String(min);
-        //     el.max = String(max); 
-        //     el.disabled = true;
-
-        //     this.el = el;
-        //     this.render(props);
-        //   }
-
-        //   getElement() {
-        //     return this.el;
-        //   }
-
-        //   render(props) {
-        //     this.el.value = String(props.value);
-        //   }
-        // }
-
-        const gridInstance = new tui.Grid({
-          el: document.getElementById('gridWrapper'),
-          rowHeaders: ['checkbox'],
-          columns: [
-            {
-              header: 'Name',
-              name: 'retrievedAt',
-              sortable: true,
-              filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
-            },
-            {
-              header: 'Value [CZK]',
-              name: 'valueCzk',
-              sortable: true,
-              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
-            },
-            {
-              header: 'Value [EUR]',
-              name: 'valueEur',
-              sortable: true,
-              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
-            },
-            {
-              header: 'Exchange rate',
-              name: 'exchangeRate',
-              sortable: true,
-              filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
-            }
-          ],
-          data: {
-            api: {
-              readData: { url: '/LiveData/GetData', method: 'GET' },
-              updateData: { url: '/LiveData/SaveData', method: 'PUT' },
-            },
-            contentType: 'application/json'
-          },
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetGridView")',
+            success: function (response) { $('#liveDataGrid').html(response); },
+            failure: function (response) { console.error('GetGridView ajax failure'); },
+            error: function (response) { console.error('GetGridView ajax error'); }
         });
+    }
 
-        function OnSaveSelected() {
+    function OnSaveLiveData(retrievedAt, el) {
 
-           gridInstance.request('updateData');
-        }
+        var data = {
+            "retrievedAt": retrievedAt
+        };
 
-        // Helper to pick a numeric id from a row object. Adjust if your id property name differs.
-        function getRowId(row) {
-            return row.id || row.Id || row.ID || row.rowKey || row._attributes?.rowKey || null;
-        }
+        //console.log('el = ' + el.parent().html());
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("SaveLiveData")',
+            data: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success: function (response) {
 
-        function showResult(message, isError) {
-            var el = document.getElementById('submitResult');
-            el.textContent = message;
-            el.style.color = isError ? 'crimson' : 'green';
-        }
-
-        document.getElementById('submitSelectedBtn').addEventListener('click', async function () {
-            try {
-                // toast-ui Grid API: getCheckedRows returns the row objects for checked checkboxes
-                const checkedRows = gridInstance.getCheckedRows();
-                const ids = checkedRows.map(getRowId).filter(function (x) { return x !== null && x !== undefined; });
-
-                if (!ids || ids.length === 0) {
-                    showResult('No rows selected.', true);
-                    return;
-                }
-
-                showResult('Submitting...', false);
-
-                const resp = await fetch('/SavedData/SubmitSelected', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(ids)
-                });
-
-                if (!resp.ok) {
-                    const txt = await resp.text();
-                    showResult('Server error: ' + (txt || resp.statusText), true);
-                    return;
-                }
-
-                const json = await resp.json();
-                showResult('Success. Processed: ' + (json?.processed ?? ids.length), false);
-            } catch (err) {
-                showResult('Request failed: ' + (err.message || err), true);
-            }
+               console.log('reponse = ' + response);
+            },
+            failure: function (response) { console.error('OnSaveLiveData ajax failure'); },
+            error: function (response) { console.error('OnSaveLiveData ajax error'); }
         });
+    }
 
-    </script>
-}
+    var periodicRefresh = window.setInterval(function() {
+        RefreshLiveDataGrid();
+    }, 30000);
+
+</script>

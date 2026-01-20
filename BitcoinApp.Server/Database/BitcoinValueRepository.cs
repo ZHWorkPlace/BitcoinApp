@@ -12,6 +12,13 @@ namespace BitcoinApp.Server.Database
             _db = db;
         }
 
+
+        public async Task<bool> ExistsAsync(DateTime retrievedAt, CancellationToken cancellationToken = default)
+        {
+            return await _db.BitcoinValueRecords.FindAsync(retrievedAt, cancellationToken) != null;
+        }
+
+
         public async Task<bool> AddAsync(DateTime retrievedAt, decimal valueEur, decimal valueCzk, decimal exchangeRate, string note, CancellationToken cancellationToken = default)
         {
             try

@@ -25,23 +25,35 @@ namespace BitcoinApp.Server.Services
                 ExchangeRate = value.ExchangeRate,
             }).ToList();
 
-            if (x.Count > 3)
-            {
-                x[2].IsSaveEnabled = false;
-            }
+            //if (x.Count > 3)
+            //{
+            //    x[2].IsSaveEnabled = false;
+            //}
 
             return x;
         }
 
-        public async Task<bool> SaveRetrievedBitcoinValueAsync(SaveRetrievedValueDto data)
+        public async Task<bool> SaveRetrievedBitcoinValueAsync(DateTime retrievedAt)
         {
-            //var result = await bitcoinValueRepository.AddAsync(data.RetrievedAt, data.Value, string.Empty);
-            //if (result)
-            //{
-            //    retrievedValuesService.MarkAsSaved(data.RetrievedAt);
-            //}
+            var exists = await bitcoinValueRepository.ExistsAsync(retrievedAt);
+            if (exists)
+            {
+                return false;
+            }
 
-            return true;// result;
+            var data = retrievedValuesService.GetRetrievedValues().FirstOrDefault(v => v.RetrievedAt == retrievedAt);
+            if (data is null)
+            {
+                return false;
+            }
+
+            var result = await bitcoinValueRepository.AddAsync(data.RetrievedAt, data.ValueEur, data.ValueCzk, data.ExchangeRate, string.Empty);
+            if (result)
+            {
+                data.IsSaved = true;
+            }
+
+            return result;
         }
 
 
