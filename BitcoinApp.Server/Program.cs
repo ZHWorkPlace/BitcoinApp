@@ -41,6 +41,7 @@ var configuration = cfgSection.Get<BitcoinAppServerConfiguration>() ?? throw new
 // HTTP client used by the background worker
 builder.Services.AddHttpClient("BitcoinWorkerClient");
 
+// HTTP client for ExchangeRateService
 builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>((client) =>
 {
     client.BaseAddress = new Uri(configuration.ExchangeRateApiEndpoint);

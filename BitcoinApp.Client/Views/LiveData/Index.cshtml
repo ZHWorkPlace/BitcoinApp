@@ -7,6 +7,7 @@
 }
 
 <div class="text-center">
+    <h2>Live Data</h2>
     <div id="liveDataGrid">
         @await Html.PartialAsync("_LiveDataGrid", Model.Grid)
     </div>
@@ -27,24 +28,19 @@
 
     function OnSaveLiveData(id, el) {
 
-        var data = {
-            "Id": id
-        };
-
-        console.log('el = ' + id);
-
-        //console.log('el = ' + el.parent().html());
         $.ajax({
             type: 'POST',
             url: '@Url.Action("SaveLiveData")',
-            data: JSON.stringify(data),
+            data: JSON.stringify({ "Id": id }),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json; charset=UTF-8'
             },
             success: function (response) {
-
-               console.log('reponse = ' + response);
+                if (response == true) {
+                    $(el).parent().parent().addClass('live-already-saved');
+                    $(el).remove();
+                }
             },
             failure: function (response) { console.error('OnSaveLiveData ajax failure'); },
             error: function (response) { console.error('OnSaveLiveData ajax error'); }

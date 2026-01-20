@@ -34,7 +34,6 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    font-family: Segoe UI, Roboto, "Helvetica Neue", Arial;
 }
 
 .live-header-row, .live-flex-row {
@@ -69,7 +68,6 @@ body {
     background-color: #e8f9ea;
 }
 
-/* Responsive adjustments */
 @media (max-width: 720px) {
     .live-flex-row, .live-header-row {
         flex-direction: column;
