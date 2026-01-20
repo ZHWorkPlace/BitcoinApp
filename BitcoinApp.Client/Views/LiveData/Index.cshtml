@@ -19,28 +19,28 @@
 
     <script type="text/javascript">
 
-         class SaveButtonRenderer {
-          constructor(props) {
-            const el = document.createElement('input');
-            const { min, max } = props.columnInfo.renderer.options;
+        //  class SaveButtonRenderer {
+        //   constructor(props) {
+        //     const el = document.createElement('input');
+        //     const { min, max } = props.columnInfo.renderer.options;
 
-            el.type = 'button';
-            el.min = String(min);
-            el.max = String(max); 
-            el.disabled = true;
+        //     el.type = 'button';
+        //     el.min = String(min);
+        //     el.max = String(max); 
+        //     el.disabled = true;
 
-            this.el = el;
-            this.render(props);
-          }
+        //     this.el = el;
+        //     this.render(props);
+        //   }
 
-          getElement() {
-            return this.el;
-          }
+        //   getElement() {
+        //     return this.el;
+        //   }
 
-          render(props) {
-            this.el.value = String(props.value);
-          }
-        }
+        //   render(props) {
+        //     this.el.value = String(props.value);
+        //   }
+        // }
 
         const gridInstance = new tui.Grid({
           el: document.getElementById('gridWrapper'),
@@ -69,13 +69,6 @@
               name: 'exchangeRate',
               sortable: true,
               filter: { type: 'number', showApplyBtn: true, showClearBtn: true }
-            },
-            {
-              header: '',
-              name: 'isSaveEnabled',
-              renderer: {
-                type: CustomSliderRenderer
-              }
             }
           ],
           data: {

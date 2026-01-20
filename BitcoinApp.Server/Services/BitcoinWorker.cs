@@ -1,19 +1,22 @@
 
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BitcoinApp.Server.Services
 {
     public sealed class BitcoinWorker : BackgroundService
     {
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly IExchangeRateService exchangeRateService;
         private readonly IRetrievedValuesService retrievedValuesService;
         private readonly ILogger<BitcoinWorker> logger;
         private readonly TimeSpan interval;
         private readonly string endpoint;
         
-        public BitcoinWorker(IHttpClientFactory httpClientFactory, IRetrievedValuesService retrievedValuesService, ILogger<BitcoinWorker> logger, IConfiguration config)
+        public BitcoinWorker(IHttpClientFactory httpClientFactory, IExchangeRateService exchangeRateService, IRetrievedValuesService retrievedValuesService, ILogger<BitcoinWorker> logger, IConfiguration config)
         {
             this.httpClientFactory = httpClientFactory;
+            this.exchangeRateService = exchangeRateService;
             this.retrievedValuesService = retrievedValuesService;
             this.logger = logger;
 
@@ -49,7 +52,7 @@ namespace BitcoinApp.Server.Services
                         continue;
                     }
 
-                    ProcessApiResponse(content);
+                    await ProcessApiResponse(content);
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
                 {
@@ -73,14 +76,24 @@ namespace BitcoinApp.Server.Services
             logger.LogInformation("BitcoinWorker stopping.");
         }
 
-        private void ProcessApiResponse(string content)
+
+        private async Task ProcessApiResponse(string content)
         {
             var document = JsonDocument.Parse(content);
             var data = document.RootElement.GetProperty("Data");
             var valueEur = data.GetProperty("BTC-EUR").GetProperty("PRICE").GetDecimal();
-            var retrievedAt = DateTime.UtcNow;
 
-            decimal exchangeRate = 24.5m; // Placeholder for actual exchange rate retrieval logic
+            var retrievedAt = DateTime.UtcNow;
+            var currentDate = DateOnly.FromDateTime(retrievedAt);
+
+            if (retrievedValuesService.ExchangeRate.TryGetExchangeRateForDate(currentDate, out var exchangeRate))
+            {
+                exchangeRate = await exchangeRateService.GetExchangeRateAsync(currentDate);
+                retrievedValuesService.ExchangeRate.SetExchangeRate(currentDate, exchangeRate);
+
+                logger.LogInformation("Fetched exchange rate for {Date}: {ExchangeRate}", currentDate, exchangeRate);
+            }
+            
             decimal valueCzk = Math.Round(valueEur * exchangeRate, 2);
 
             retrievedValuesService.AddRetrievedValue(retrievedAt, valueEur, valueCzk, exchangeRate);

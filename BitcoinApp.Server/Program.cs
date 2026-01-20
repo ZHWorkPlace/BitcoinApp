@@ -1,6 +1,8 @@
+using BitcoinApp.Server;
 using BitcoinApp.Server.Database;
 using BitcoinApp.Server.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,9 +32,19 @@ builder.Services.AddSingleton<IRetrievedValuesService, RetrievedValuesService>()
 
 // Register API service
 builder.Services.AddTransient<BitcoinValuesApiService>();
+builder.Services.AddTransient<IExchangeRateService, ExchangeRateService>();
+
+// Read BitcoinApp.Server configuration
+var cfgSection = builder.Configuration.GetSection(nameof(BitcoinAppServerConfiguration));
+var configuration = cfgSection.Get<BitcoinAppServerConfiguration>() ?? throw new Exception($"Reading of section '{nameof(BitcoinAppServerConfiguration)}' failed");
 
 // HTTP client used by the background worker
 builder.Services.AddHttpClient("BitcoinWorkerClient");
+
+builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>((client) =>
+{
+    client.BaseAddress = new Uri(configuration.ExchangeRateApiEndpoint);
+});
 
 // Register the periodic background worker
 builder.Services.AddHostedService<BitcoinWorker>();
